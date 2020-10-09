@@ -1,105 +1,91 @@
 let store = {
-    user: { name: "Student" },
-    apod: '',
-    rovers: ['Curiosity', 'Opportunity', 'Spirit'],
-}
+  currentTab: "curiosity",
+  roverPhotos: []
+};
 
-// add our markup to the page
-const root = document.getElementById('root')
+//add our markup to the page
+const root = document.getElementById("root");
+const tabs = document.querySelectorAll(".tab");
 
 const updateStore = (store, newState) => {
-    store = Object.assign(store, newState)
-    render(root, store)
-}
+  store = Object.assign(store, newState);
+  render(root, store);
+};
 
 const render = async (root, state) => {
-    root.innerHTML = App(state)
-}
+  root.innerHTML = App(state);
+};
 
+const App = state => {
+  const { roverPhotos } = state;
+  return generateHTML(roverPhotos);
+};
 
-// create content
-const App = (state) => {
-    let { rovers, apod } = state
+const generateHTML = roverPhotos => {
+  //const photoHTML = renderPhotos(roverPhotos);
 
-    return `
-        <header></header>
-        <main>
-            ${Greeting(store.user.name)}
-            <section>
-                <h3>Put things on the page!</h3>
-                <p>Here is an example section.</p>
-                <p>
-                    One of the most popular websites at NASA is the Astronomy Picture of the Day. In fact, this website is one of
-                    the most popular websites across all federal agencies. It has the popular appeal of a Justin Bieber video.
-                    This endpoint structures the APOD imagery and associated metadata so that it can be repurposed for other
-                    applications. In addition, if the concept_tags parameter is set to True, then keywords derived from the image
-                    explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
-                    but generally help with discoverability of relevant imagery.
-                </p>
-                ${ImageOfTheDay(apod)}
-            </section>
-        </main>
-        <footer></footer>
-    `
-}
+  let photoHTML = ``;
+  //debugger;
+  roverPhotos.image.photos.map(photo => {
+    photoHTML += `
+        <figure class="image-card">
+          <img src="${photo.img_src}" alt="Rover image" class="rover-image"/>
+          <figcaption>
+          <span><b>Sol (Mars days):</b> ${photo.sol}</span><br/>
+          <span><b>Earth date:</b> ${photo.earth_date}</span>
+          </figcaption>
+          </figure>
+    `;
+  });
 
-// listening for load event because page should load before any JS is called
-window.addEventListener('load', () => {
-    render(root, store)
-})
+  return `
+  <div>
+      <section class="image-container">
+        ${photoHTML}
+      </section>
+  </div>
+  `;
+};
 
-// ------------------------------------------------------  COMPONENTS
+const init = (tabs, store) => {
+  //replace forEach with map when testing
+  tabs.forEach(tab => {
+    tab.addEventListener(`click`, async event => {
+      debugger;
+      const currentTab = event.target.innerText;
+      await updateStore(store, { currentTab: currentTab });
+      activeTab(tabs, tab);
+      fetchData(store, currentTab);
+    });
+  });
+};
 
-// Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
-const Greeting = (name) => {
-    if (name) {
-        return `
-            <h1>Welcome, ${name}!</h1>
-        `
-    }
+const fetchData = async (store, currentTab) => {
+  await getRoverPhotos(store, currentTab);
+};
 
-    return `
-        <h1>Hello!</h1>
-    `
-}
+window.addEventListener("load", async () => {
+  init(tabs, store);
+  await fetchData(store, "curiosity");
+  render(root, store);
+});
 
-// Example of a pure function that renders infomation requested from the backend
-const ImageOfTheDay = (apod) => {
+const activeTab = (tabs, currentTab) => {
+  console.log(tabs);
+  tabs.forEach(tab => tab.classList.remove("active"));
+  currentTab.classList.add("active");
+};
 
-    // If image does not already exist, or it is not from today -- request it again
-    const today = new Date()
-    const photodate = new Date(apod.date)
-    console.log(photodate.getDate(), today.getDate());
-
-    console.log(photodate.getDate() === today.getDate());
-    if (!apod || apod.date === today.getDate() ) {
-        getImageOfTheDay(store)
-    }
-
-    // check if the photo of the day is actually type video!
-    if (apod.media_type === "video") {
-        return (`
-            <p>See today's featured video <a href="${apod.url}">here</a></p>
-            <p>${apod.title}</p>
-            <p>${apod.explanation}</p>
-        `)
-    } else {
-        return (`
-            <img src="${apod.image.url}" height="350px" width="100%" />
-            <p>${apod.image.explanation}</p>
-        `)
-    }
-}
-
-// ------------------------------------------------------  API CALLS
-
-// Example API call
-const getImageOfTheDay = (state) => {
-    let { apod } = state
-
-    fetch(`http://localhost:3000/apod`)
-        .then(res => res.json())
-        .then(apod => updateStore(store, { apod }))
-
-    return data
-}
+const getRoverPhotos = (store, roverName) => {
+  fetch(`http://localhost:3000/apod`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ roverName: roverName })
+  })
+    .then(res => res.json())
+    .then(roverPhotos => {
+      updateStore(store, { roverPhotos: roverPhotos });
+    });
+};
