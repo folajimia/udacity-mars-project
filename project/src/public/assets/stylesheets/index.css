@@ -8,19 +8,12 @@ body {
   color: #444;
 }
 .container {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-/* .container .nav {
-  position: relative;
-  width: 50%;
-  text-align: center;
+  margin-top: 70px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-} */
+  justify-content: space-around;
+  text-align: center;
+  position: sticky;
+}
 
 ul {
   list-style: none;
@@ -54,40 +47,20 @@ a:hover {
   color: white;
 }
 
-.tab-pane {
-  display: none;
+.image-container {
+  display: flex;
+  flex-wrap: wrap;
 }
 
-.tab-pane.active {
-  display: block;
-}
-
-.tab-pane {
-  display: none;
-}
-.tab-pane.active {
-  display: block;
-}
-*/ header {
+header {
   /* header styles */
   text-align: center;
-  background-color: rgb(246, 194, 126);
   font-weight: bold;
   padding: 1em;
   box-shadow: 0 2px 2px -2px rgba(44, 26, 6, 0.753);
-  position: fixed;
   width: 100%;
   z-index: 100;
 }
-
-/* .container {
-  margin-top: 70px;
-  display: flex;
-  background: #fff;
-  justify-content: space-around;
-  text-align: center;
-  position: sticky;
-} */
 
 main {
   flex: 1;
@@ -101,6 +74,14 @@ footer {
 /* -------------------  TABLET  --------------------- */
 @media (min-width: 768px) {
   /* use mobile */
+  .tab {
+    font-size: 1.2em;
+  }
+
+  .image-container {
+    width: 100%;
+    height: auto;
+  }
 }
 
 /* -------------------  DESKTOP  -------------------- */
