@@ -1,7 +1,19 @@
-let store = {
+const { Map } = require("immutable");
+
+let store = Map({
+  user: {
+    name: "Folajimi Adekoya"
+  },
+  rovers: ["curiosity", "opportunity", "spirit"],
+  roverPhotos: [],
   currentTab: "curiosity",
-  roverPhotos: []
-};
+  rover: ""
+});
+
+// let store = {
+//   currentTab: "curiosity",
+//   roverPhotos: []
+// };
 
 //add our markup to the page
 const root = document.getElementById("root");
@@ -26,7 +38,7 @@ const generateHTML = roverPhotos => {
 
   let photoHTML = ``;
   //debugger;
-  roverPhotos.image.photos.map(photo => {
+  roverPhotos.image.latest_photos.map(photo => {
     photoHTML += `
         <figure class="image-card">
           <img src="${photo.img_src}" alt="Rover image" class="rover-image"/>
@@ -89,3 +101,30 @@ const getRoverPhotos = (store, roverName) => {
       updateStore(store, { roverPhotos: roverPhotos });
     });
 };
+
+// const { Map } = require("immutable");
+// const getRoverPhotos = (store, roverName) => {
+//   fetch(`http://localhost:3000/apod`, {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json"
+//     },
+//     body: JSON.stringify({ roverName: roverName })
+//   })
+//     .then(res => res.json())
+//     .then(roverPhotos => {
+//       updateStore(store, { roverPhotos: roverPhotos });
+//     });
+// };
+
+//const RoverPhotoMap = Map(getRoverPhotos(store, "curiosity"));
+
+// RoverPhotoMap;
+//let { Map } = require("immutable");
+//import Immutable from require('immutable');
+
+//import Immutable from require('immutable');
+//const map = Map();
+
+//const map = Map();
+console.log(store);

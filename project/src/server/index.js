@@ -33,7 +33,7 @@ app.use("/", express.static(path.join(__dirname, "../public")));
 app.post("/apod", async (req, res) => {
   try {
     let image = await fetch(
-      `https://api.nasa.gov/mars-photos/api/v1/rovers/${req.body.roverName}/photos?sol=2100?&api_key=${process.env.API_KEY}`
+      `https://api.nasa.gov/mars-photos/api/v1/rovers/${req.body.roverName}/latest_photos?api_key=${process.env.API_KEY}`
     ).then(res => res.json());
     debugger;
     res.send({ image });
@@ -45,15 +45,4 @@ app.post("/apod", async (req, res) => {
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
-// app.get("/apod", async (req, res) => {
-//   try {
-//     let image = await fetch(
-//       `https://api.nasa.gov/planetary/apod?api_key=${process.env.API_KEY}`
-//     ).then(res => res.json());
-//     res.send({ image });
-//   } catch (err) {
-//     console.log("error:", err);
-//   }
-// });
-
-// app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+//`https://api.nasa.gov/mars-photos/api/v1/rovers/${req.body.roverName}/photos?sol=2100?&api_key=${process.env.API_KEY}`
