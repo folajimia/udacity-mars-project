@@ -25,19 +25,19 @@ const updateStore = (store, newState) => {
 };
 
 const render = async (root, state) => {
-  root.innerHTML = App(state);
+  root.innerHTML = App(state, renderInfo, renderImages);
 };
 
-const App = state => {
+const App = (state, renderInfo, renderImages) => {
   const { roverPhotos } = state;
-  return generateHTML(roverPhotos);
+  return generateHTML(roverPhotos, renderInfo, renderImages);
 };
 
-const generateHTML = roverPhotos => {
-  //const photoHTML = renderPhotos(roverPhotos);
-
+// A pure function that renders images requested from the backend
+const renderImages = roverPhotos => {
   let photoHTML = ``;
-  //debugger;
+
+  // here map() is also a higher order function
   roverPhotos.image.latest_photos.map(photo => {
     photoHTML += `
         <figure class="image-card">
@@ -49,16 +49,78 @@ const generateHTML = roverPhotos => {
           </figure>
     `;
   });
-
-  return `
-  <div>
-      <section class="image-container">
-        ${photoHTML}
-      </section>
-  </div>
-  `;
+  return photoHTML;
 };
 
+const renderInfo = roverPhotos => {
+  // here map() is also a higher order function
+  const roverData = roverPhotos.image.latest_photos[0].rover;
+  let roverInfoHTML = `<h4>Welcome to my dashboard</h4>
+          <div class="info">
+          <strong>These are photos from </strong> <p>${roverData.name}</p>
+          <strong>The current Status of the Rover is</strong>
+            <p>${roverData.status}</p>
+            <strong>The Rover Launch Date is</strong>
+            <p>${roverData.launch_date}</p>
+            <strong>The Rover Landing Date is</strong>
+            <p>${roverData.landing_date}</p>
+        </div>
+  `;
+  //});
+  return roverInfoHTML;
+};
+
+const generateHTML = (roverPhotos, renderInfo, renderImages) => {
+  const roverInfoHTML = renderInfo(roverPhotos);
+  const photoHTML = renderImages(roverPhotos);
+  return `
+        <div>
+                ${roverInfoHTML}
+            <section class="image-container">
+                ${photoHTML}
+            </section>
+        </div>
+    `;
+};
+
+// const generateHTML = roverPhotos => {
+//   //const photoHTML = renderPhotos(roverPhotos);
+
+//   const roverData = roverPhotos.image.latest_photos[0].rover;
+//   let photoHTML = ``;
+//   let textHTML = `<h4>Welcome to my dashboard</h4>
+//           <div class="info">
+//           <strong>These are photos from </strong> <p>${roverData.name}</p>
+//           <strong>The current Status of the Rover is</strong>
+//             <p>${roverData.status}</p>
+//             <strong>The Rover Launch Date is</strong>
+//             <p>${roverData.launch_date}</p>
+//             <strong>The Rover Landing Date is</strong>
+//             <p>${roverData.landing_date}</p>
+//         </div>
+//   `;
+//   //debugger;
+//   roverPhotos.image.latest_photos.map(photo => {
+//     photoHTML += `
+//         <figure class="image-card">
+//           <img src="${photo.img_src}" alt="Rover image" class="rover-image"/>
+//           <figcaption>
+//           <span><b>Sol (Mars days):</b> ${photo.sol}</span><br/>
+//           <span><b>Earth date:</b> ${photo.earth_date}</span>
+//           </figcaption>
+//           </figure>
+//     `;
+//   });
+
+//   return `
+//   <div>
+//         ${textHTML}
+//       <section class="image-container">
+//         ${photoHTML}
+//       </section>
+//   </div>
+//   `;
+// };
 const init = (tabs, store) => {
   //replace forEach with map when testing
   tabs.forEach(tab => {
